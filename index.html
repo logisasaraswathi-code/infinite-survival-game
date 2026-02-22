@@ -3,84 +3,90 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Is It Infinite? - Survival Edition</title>
+<title>Is It Infinite? - Survival Mode</title>
 
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
+*{box-sizing:border-box;margin:0;padding:0}
 
-body {
-  font-family: Arial, sans-serif;
-  color: white;
-  text-align: center;
-  overflow-x: hidden;
-  background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #1c1c1c);
-  background-size: 400% 400%;
-  animation: gradientMove 12s ease infinite;
+body{
+  font-family:Arial, sans-serif;
+  color:white;
+  text-align:center;
+  background:linear-gradient(-45deg,#0f2027,#203a43,#2c5364,#000000);
+  background-size:400% 400%;
+  animation:bgMove 15s ease infinite;
 }
 
-@keyframes gradientMove {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+@keyframes bgMove{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
 }
 
-.container {
-  max-width: 700px;
-  margin: auto;
-  padding: 20px;
+.container{
+  max-width:750px;
+  margin:auto;
+  padding:20px;
 }
 
-h1 { margin: 20px 0; font-size: 30px; }
+h1{margin:20px 0;font-size:28px}
 
-#question {
-  font-size: 22px;
-  margin: 30px 0;
-  min-height: 60px;
+#question{
+  margin:30px 0;
+  font-size:20px;
+  min-height:60px;
 }
 
-button {
-  padding: 14px 25px;
-  margin: 10px;
-  font-size: 18px;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-  transition: 0.3s;
+button{
+  padding:14px 22px;
+  margin:8px;
+  font-size:17px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  transition:0.3s;
 }
 
-button:hover { transform: scale(1.1); }
+button:hover{transform:scale(1.08)}
 
-.finite { background: #ff4b5c; color: white; }
-.infinite { background: #00c9a7; color: white; }
+.finite{background:#ff4b5c;color:white}
+.infinite{background:#00c9a7;color:white}
 
-.info { margin-top: 15px; font-size: 18px; }
+.info{margin-top:10px;font-size:17px}
 
-.leaderboard {
-  margin-top: 30px;
-  background: rgba(255,255,255,0.1);
-  padding: 15px;
-  border-radius: 10px;
+.leaderboard{
+  margin-top:25px;
+  background:rgba(255,255,255,0.1);
+  padding:15px;
+  border-radius:10px;
 }
 
-.popup {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: #111;
-  padding: 20px;
-  border-radius: 10px;
-  display: none;
-  width: 90%;
-  max-width: 400px;
+.popup{
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  background:#111;
+  padding:20px;
+  border-radius:10px;
+  display:none;
+  width:90%;
+  max-width:450px;
 }
 
-.popup button { margin-top: 10px; }
+.popup button{margin-top:10px}
 
-@media (max-width: 500px) {
-  h1 { font-size: 22px; }
-  #question { font-size: 18px; }
-  button { font-size: 16px; }
+#restartBtn{
+  display:none;
+  background:gold;
+  color:black;
+  font-weight:bold;
+}
+
+@media(max-width:500px){
+  h1{font-size:22px}
+  #question{font-size:18px}
+  button{font-size:15px}
 }
 </style>
 </head>
@@ -88,188 +94,221 @@ button:hover { transform: scale(1.1); }
 <body>
 
 <div class="container">
-  <h1>Is It Infinite? 🔥 Survival Mode</h1>
+<h1>🔥 Is It Infinite? - Survival Mode</h1>
 
-  <input type="text" id="username" placeholder="Enter your name">
-  <br><br>
+<input type="text" id="username" placeholder="Enter your name">
+<br><br>
 
-  <button onclick="startGame()">Start Game</button>
+<button onclick="startGame()">Start Game</button>
+<button id="restartBtn" onclick="startGame()">Play Again</button>
 
-  <div id="levelDisplay" class="info"></div>
-  <div id="question">Press Start</div>
+<div class="info" id="levelDisplay"></div>
+<div id="question">Press Start</div>
 
+<div id="answerButtons">
   <button class="finite" onclick="checkAnswer('Finite')">Finite</button>
   <button class="infinite" onclick="checkAnswer('Infinite')">Infinite</button>
-
-  <div class="info" id="timer"></div>
-  <div class="info" id="scoreBoard"></div>
-  <div class="info" id="lives"></div>
-
-  <div class="leaderboard">
-    <h3>🏆 Leaderboard (Top 5)</h3>
-    <div id="leaderboardList"></div>
-  </div>
 </div>
 
-<div class="popup" id="explanationPopup">
-  <div id="explanationText"></div>
-  <button onclick="closePopup()">Continue</button>
+<div class="info" id="timer"></div>
+<div class="info" id="scoreBoard"></div>
+<div class="info" id="lives"></div>
+
+<div class="leaderboard">
+<h3>🏆 Leaderboard (Top 5)</h3>
+<div id="leaderboardList"></div>
+</div>
+</div>
+
+<div class="popup" id="popup">
+<div id="popupText"></div>
+<button onclick="closePopup()">Continue</button>
 </div>
 
 <script>
 
 const levels = [
-  [
-    { q:"Days in a week", a:"Finite", e:"There are exactly 7 days." },
-    { q:"Months in a year", a:"Finite", e:"There are 12 months." },
-    { q:"Letters in English alphabet", a:"Finite", e:"There are 26 letters." }
-  ],
-  [
-    { q:"Natural Numbers", a:"Infinite", e:"Numbers continue forever." },
-    { q:"Prime Numbers", a:"Infinite", e:"There are infinitely many primes." },
-    { q:"Points on a line", a:"Infinite", e:"Between any two points, infinite points exist." }
-  ],
-  [
-    { q:"Real numbers between 0 and 1", a:"Infinite", e:"Uncountably infinite values exist." },
-    { q:"Integers", a:"Infinite", e:"They extend forever in both directions." },
-    { q:"Subsets of natural numbers", a:"Infinite", e:"Power set creates infinite subsets." }
-  ]
+
+[
+{q:"Days in a week",a:"Finite",e:"Exactly 7 days."},
+{q:"Months in a year",a:"Finite",e:"12 months exist."},
+{q:"Letters in English alphabet",a:"Finite",e:"There are 26 letters."}
+],
+
+[
+{q:"Natural numbers",a:"Infinite",e:"Counting never ends."},
+{q:"Even numbers",a:"Infinite",e:"They continue forever."},
+{q:"Prime numbers less than 50",a:"Finite",e:"Limited primes below 50."}
+],
+
+[
+{q:"Prime numbers",a:"Infinite",e:"Infinitely many primes exist."},
+{q:"Integers between -10 and 10",a:"Finite",e:"Limited count."},
+{q:"Points on a line segment",a:"Infinite",e:"Infinite points exist."}
+],
+
+[
+{q:"Real numbers",a:"Infinite",e:"Uncountably infinite."},
+{q:"Rational numbers",a:"Infinite",e:"Countably infinite."},
+{q:"Subsets of {1,2,3,4}",a:"Finite",e:"Finite set → finite subsets."}
+],
+
+[
+{q:"All subsets of natural numbers",a:"Infinite",e:"Power set of infinite set is infinite."},
+{q:"Real numbers between 0 and 1",a:"Infinite",e:"Uncountably infinite."},
+{q:"Functions from N to {0,1}",a:"Infinite",e:"Infinite binary sequences exist."}
+]
+
 ];
 
-let currentLevel = 0;
-let questionIndex = 0;
-let score = 0;
-let lives = 3;
-let timeLeft = 15;
+let currentLevel=0;
+let questionIndex=0;
+let score=0;
+let lives=3;
+let timeLeft=20;
 let timerInterval;
+let gameActive=false;
 
-function startGame() {
-  currentLevel = 0;
-  score = 0;
-  lives = 3;
+function startGame(){
+  currentLevel=0;
+  questionIndex=0;
+  score=0;
+  lives=3;
+  gameActive=true;
+
+  document.getElementById("restartBtn").style.display="none";
+  document.getElementById("answerButtons").style.display="block";
+
   loadLevel();
   updateDisplay();
 }
 
-function loadLevel() {
-  if (currentLevel >= levels.length) {
+function loadLevel(){
+  if(currentLevel>=levels.length){
     endGame(true);
     return;
   }
-
-  questionIndex = 0;
   shuffle(levels[currentLevel]);
+  questionIndex=0;
   loadQuestion();
 }
 
-function loadQuestion() {
-  if (questionIndex >= levels[currentLevel].length) {
+function loadQuestion(){
+  if(questionIndex>=levels[currentLevel].length){
     currentLevel++;
     loadLevel();
     return;
   }
-
-  const question = levels[currentLevel][questionIndex];
-  document.getElementById("question").innerText = question.q;
-  document.getElementById("levelDisplay").innerText = "Level: " + (currentLevel+1);
+  document.getElementById("levelDisplay").innerText=
+    "Level "+(currentLevel+1);
+  document.getElementById("question").innerText=
+    levels[currentLevel][questionIndex].q;
   resetTimer();
 }
 
-function checkAnswer(answer) {
-  const question = levels[currentLevel][questionIndex];
+function checkAnswer(ans){
+  if(!gameActive) return;
 
-  if (answer === question.a) {
-    score += 10;
-  } else {
-    score -= 10;
+  const q=levels[currentLevel][questionIndex];
+
+  if(ans===q.a){
+    score+=10;
+  }else{
+    score-=10;
     lives--;
   }
 
-  showExplanation(question.e);
+  showPopup(q.e);
   questionIndex++;
   updateDisplay();
 
-  if (lives <= 0) {
+  if(lives<=0){
     endGame(false);
   }
 }
 
-function updateDisplay() {
-  document.getElementById("scoreBoard").innerText = "Score: " + score;
-  document.getElementById("lives").innerText = "Lives: " + lives;
+function updateDisplay(){
+  document.getElementById("scoreBoard").innerText="Score: "+score;
+  document.getElementById("lives").innerText="Lives: "+lives;
 }
 
-function startTimer() {
-  timerInterval = setInterval(() => {
+function startTimer(){
+  timerInterval=setInterval(()=>{
     timeLeft--;
-    document.getElementById("timer").innerText = "Time: " + timeLeft;
+    document.getElementById("timer").innerText="Time: "+timeLeft;
 
-    if (timeLeft <= 0) {
+    if(timeLeft<=0){
       lives--;
-      updateDisplay();
       questionIndex++;
-      if (lives <= 0) {
+      updateDisplay();
+      if(lives<=0){
         endGame(false);
-      } else {
+      }else{
         loadQuestion();
       }
       resetTimer();
     }
-  }, 1000);
+  },1000);
 }
 
-function resetTimer() {
+function resetTimer(){
   clearInterval(timerInterval);
-  timeLeft = 15;
+  timeLeft=20;
   startTimer();
 }
 
-function endGame(win) {
+function endGame(win){
   clearInterval(timerInterval);
-  document.getElementById("question").innerText =
-    win ? "🏆 You Survived All Levels!" : "💀 Game Over!";
+  gameActive=false;
+
+  document.getElementById("answerButtons").style.display="none";
+  document.getElementById("restartBtn").style.display="inline-block";
+
+  document.getElementById("question").innerText=
+    win ? "🏆 You Survived All Levels!" :
+          "💀 You Lost All Lives! Try Again.";
+
   saveScore();
   showLeaderboard();
 }
 
-function shuffle(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
   }
 }
 
-function showExplanation(text) {
-  document.getElementById("explanationText").innerText = text;
-  document.getElementById("explanationPopup").style.display = "block";
+function showPopup(text){
+  document.getElementById("popupText").innerText=text;
+  document.getElementById("popup").style.display="block";
 }
 
-function closePopup() {
-  document.getElementById("explanationPopup").style.display = "none";
-  loadQuestion();
+function closePopup(){
+  document.getElementById("popup").style.display="none";
+  if(gameActive) loadQuestion();
 }
 
-function saveScore() {
-  const username = document.getElementById("username").value || "Guest";
-  let leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
-  leaderboard.push({ username, score });
-  leaderboard.sort((a,b) => b.score - a.score);
-  leaderboard = leaderboard.slice(0,5);
-  localStorage.setItem("leaderboard", JSON.stringify(leaderboard));
+function saveScore(){
+  const username=document.getElementById("username").value||"Guest";
+  let leaderboard=JSON.parse(localStorage.getItem("leaderboard"))||[];
+  leaderboard.push({username,score});
+  leaderboard.sort((a,b)=>b.score-a.score);
+  leaderboard=leaderboard.slice(0,5);
+  localStorage.setItem("leaderboard",JSON.stringify(leaderboard));
 }
 
-function showLeaderboard() {
-  const leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
-  const list = document.getElementById("leaderboardList");
-  list.innerHTML = "";
-  leaderboard.forEach((player, index) => {
-    list.innerHTML += `<div>${index+1}. ${player.username} - ${player.score}</div>`;
+function showLeaderboard(){
+  const leaderboard=JSON.parse(localStorage.getItem("leaderboard"))||[];
+  const list=document.getElementById("leaderboardList");
+  list.innerHTML="";
+  leaderboard.forEach((p,i)=>{
+    list.innerHTML+=`<div>${i+1}. ${p.username} - ${p.score}</div>`;
   });
 }
 
 showLeaderboard();
 
 </script>
-
 </body>
-  </html>
+</html>
