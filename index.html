@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Is It Infinite? - Survival Edition</title>
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: Arial, sans-serif;
+  color: white;
+  text-align: center;
+  overflow-x: hidden;
+  background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #1c1c1c);
+  background-size: 400% 400%;
+  animation: gradientMove 12s ease infinite;
+}
+
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.container {
+  max-width: 700px;
+  margin: auto;
+  padding: 20px;
+}
+
+h1 { margin: 20px 0; font-size: 30px; }
+
+#question {
+  font-size: 22px;
+  margin: 30px 0;
+  min-height: 60px;
+}
+
+button {
+  padding: 14px 25px;
+  margin: 10px;
+  font-size: 18px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover { transform: scale(1.1); }
+
+.finite { background: #ff4b5c; color: white; }
+.infinite { background: #00c9a7; color: white; }
+
+.info { margin-top: 15px; font-size: 18px; }
+
+.leaderboard {
+  margin-top: 30px;
+  background: rgba(255,255,255,0.1);
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #111;
+  padding: 20px;
+  border-radius: 10px;
+  display: none;
+  width: 90%;
+  max-width: 400px;
+}
+
+.popup button { margin-top: 10px; }
+
+@media (max-width: 500px) {
+  h1 { font-size: 22px; }
+  #question { font-size: 18px; }
+  button { font-size: 16px; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>Is It Infinite? 🔥 Survival Mode</h1>
+
+  <input type="text" id="username" placeholder="Enter your name">
+  <br><br>
+
+  <button onclick="startGame()">Start Game</button>
+
+  <div id="levelDisplay" class="info"></div>
+  <div id="question">Press Start</div>
+
+  <button class="finite" onclick="checkAnswer('Finite')">Finite</button>
+  <button class="infinite" onclick="checkAnswer('Infinite')">Infinite</button>
+
+  <div class="info" id="timer"></div>
+  <div class="info" id="scoreBoard"></div>
+  <div class="info" id="lives"></div>
+
+  <div class="leaderboard">
+    <h3>🏆 Leaderboard (Top 5)</h3>
+    <div id="leaderboardList"></div>
+  </div>
+</div>
+
+<div class="popup" id="explanationPopup">
+  <div id="explanationText"></div>
+  <button onclick="closePopup()">Continue</button>
+</div>
+
+<script>
+
+const levels = [
+  [
+    { q:"Days in a week", a:"Finite", e:"There are exactly 7 days." },
+    { q:"Months in a year", a:"Finite", e:"There are 12 months." },
+    { q:"Letters in English alphabet", a:"Finite", e:"There are 26 letters." }
+  ],
+  [
+    { q:"Natural Numbers", a:"Infinite", e:"Numbers continue forever." },
+    { q:"Prime Numbers", a:"Infinite", e:"There are infinitely many primes." },
+    { q:"Points on a line", a:"Infinite", e:"Between any two points, infinite points exist." }
+  ],
+  [
+    { q:"Real numbers between 0 and 1", a:"Infinite", e:"Uncountably infinite values exist." },
+    { q:"Integers", a:"Infinite", e:"They extend forever in both directions." },
+    { q:"Subsets of natural numbers", a:"Infinite", e:"Power set creates infinite subsets." }
+  ]
+];
+
+let currentLevel = 0;
+let questionIndex = 0;
+let score = 0;
+let lives = 3;
+let timeLeft = 15;
+let timerInterval;
+
+function startGame() {
+  currentLevel = 0;
+  score = 0;
+  lives = 3;
+  loadLevel();
+  updateDisplay();
+}
+
+function loadLevel() {
+  if (currentLevel >= levels.length) {
+    endGame(true);
+    return;
+  }
+
+  questionIndex = 0;
+  shuffle(levels[currentLevel]);
+  loadQuestion();
+}
+
+function loadQuestion() {
+  if (questionIndex >= levels[currentLevel].length) {
+    currentLevel++;
+    loadLevel();
+    return;
+  }
+
+  const question = levels[currentLevel][questionIndex];
+  document.getElementById("question").innerText = question.q;
+  document.getElementById("levelDisplay").innerText = "Level: " + (currentLevel+1);
+  resetTimer();
+}
+
+function checkAnswer(answer) {
+  const question = levels[currentLevel][questionIndex];
+
+  if (answer === question.a) {
+    score += 10;
+  } else {
+    score -= 10;
+    lives--;
+  }
+
+  showExplanation(question.e);
+  questionIndex++;
+  updateDisplay();
+
+  if (lives <= 0) {
+    endGame(false);
+  }
+}
+
+function updateDisplay() {
+  document.getElementById("scoreBoard").innerText = "Score: " + score;
+  document.getElementById("lives").innerText = "Lives: " + lives;
+}
+
+function startTimer() {
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    document.getElementById("timer").innerText = "Time: " + timeLeft;
+
+    if (timeLeft <= 0) {
+      lives--;
+      updateDisplay();
+      questionIndex++;
+      if (lives <= 0) {
+        endGame(false);
+      } else {
+        loadQuestion();
+      }
+      resetTimer();
+    }
+  }, 1000);
+}
+
+function resetTimer() {
+  clearInterval(timerInterval);
+  timeLeft = 15;
+  startTimer();
+}
+
+function endGame(win) {
+  clearInterval(timerInterval);
+  document.getElementById("question").innerText =
+    win ? "🏆 You Survived All Levels!" : "💀 Game Over!";
+  saveScore();
+  showLeaderboard();
+}
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
+function showExplanation(text) {
+  document.getElementById("explanationText").innerText = text;
+  document.getElementById("explanationPopup").style.display = "block";
+}
+
+function closePopup() {
+  document.getElementById("explanationPopup").style.display = "none";
+  loadQuestion();
+}
+
+function saveScore() {
+  const username = document.getElementById("username").value || "Guest";
+  let leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
+  leaderboard.push({ username, score });
+  leaderboard.sort((a,b) => b.score - a.score);
+  leaderboard = leaderboard.slice(0,5);
+  localStorage.setItem("leaderboard", JSON.stringify(leaderboard));
+}
+
+function showLeaderboard() {
+  const leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
+  const list = document.getElementById("leaderboardList");
+  list.innerHTML = "";
+  leaderboard.forEach((player, index) => {
+    list.innerHTML += `<div>${index+1}. ${player.username} - ${player.score}</div>`;
+  });
+}
+
+showLeaderboard();
+
+</script>
+
+</body>
+  </html>
